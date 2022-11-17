@@ -49,6 +49,6 @@ func (c *ClientUploader) UploadFile(file multipart.File, uploadPath, object stri
 	if err := wc.Close(); err != nil {
 		return "", fmt.Errorf("Writer.Close: %v", err)
 	}
-	link := fmt.Sprintf("https://storage.googleapis.com/be10-petdopter/%s%s", uploadPath, object)
+	link := fmt.Sprintf("https://storage.googleapis.com/altabucket/%s%s", uploadPath, object)
 	return link, nil
 }

@@ -81,6 +81,7 @@ func (handler *userDelivery) RegisterUser(c echo.Context) error {
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
 		imageaddress, errupload := handler.client.UploadFile(dataFoto, "users/", imageName)
 		if errupload != nil {
+			fmt.Println("error upload user", errupload)
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
 
