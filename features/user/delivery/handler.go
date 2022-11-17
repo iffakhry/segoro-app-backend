@@ -1,14 +1,15 @@
 package delivery
 
 import (
+	"capstone-project/config"
 	"capstone-project/features/user"
 	"capstone-project/middlewares"
 	"capstone-project/utils/helper"
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -75,11 +76,12 @@ func (handler *userDelivery) RegisterUser(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, err_image_size)
 		}
 		//rename
-		waktu := fmt.Sprintf("%v", time.Now())
-		imageName := data.Name_User + "_" + "photo" + waktu + "." + format
-
+		generatePhotoName := uuid.New()
+		// waktu := fmt.Sprintf("%v", time.Now())
+		imageName := data.Name_User + "_" + "photo" + generatePhotoName.String() + "." + format
+		uploadPath := config.BUCKET_ROOT_FOLDER
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
-		imageaddress, errupload := handler.client.UploadFile(dataFoto, "users/", imageName)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, uploadPath+"users/", imageName)
 		fmt.Println("error upload user", errupload)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file foto user"))
@@ -163,11 +165,12 @@ func (handler *userDelivery) UpdateUser(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, err_image_size)
 		}
 		//rename
-		waktu := fmt.Sprintf("%v", time.Now())
-		imageName := data.Name_User + "_" + "photo" + waktu + "." + format
-
+		generatePhotoName := uuid.New()
+		// waktu := fmt.Sprintf("%v", time.Now())
+		imageName := data.Name_User + "_" + "photo" + generatePhotoName.String() + "." + format
+		uploadPath := config.BUCKET_ROOT_FOLDER
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
-		imageaddress, errupload := handler.client.UploadFile(dataFoto, "users/", imageName)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, uploadPath+"users/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
@@ -232,11 +235,12 @@ func (handler *userDelivery) RegisterOwner(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, err_image_size)
 		}
 		//rename
-		waktu := fmt.Sprintf("%v", time.Now())
-		imageName := strconv.Itoa(int(data.UserID)) + "_" + "photo" + waktu + "." + format
-
+		generatePhotoName := uuid.New()
+		// waktu := fmt.Sprintf("%v", time.Now())
+		imageName := strconv.Itoa(int(data.UserID)) + "_" + "photo" + generatePhotoName.String() + "." + format
+		uploadPath := config.BUCKET_ROOT_FOLDER
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
-		imageaddress, errupload := handler.client.UploadFile(dataFoto, "owners/", imageName)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, uploadPath+"owners/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}

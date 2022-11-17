@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"capstone-project/config"
 	"capstone-project/features/venue"
 	"capstone-project/middlewares"
 	"capstone-project/utils/helper"
@@ -8,8 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"time"
-
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -175,11 +175,12 @@ func (delivery *venueDelivery) PostPhoto(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, err_image_size)
 		}
 		//rename
-		waktu := fmt.Sprintf("%v", time.Now())
-		imageName := strconv.Itoa(int(data.VenueID)) + "_" + "photo" + waktu + "." + format
-
+		generatePhotoName := uuid.New()
+		// waktu := fmt.Sprintf("%v", time.Now())
+		imageName := strconv.Itoa(int(data.VenueID)) + "_" + "photo" + generatePhotoName.String() + "." + format
+		uploadPath := config.BUCKET_ROOT_FOLDER
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
-		imageaddress, errupload := delivery.client.UploadFile(dataFoto, "venues/", imageName)
+		imageaddress, errupload := delivery.client.UploadFile(dataFoto, uploadPath+"venues/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
@@ -232,11 +233,12 @@ func (delivery *venueDelivery) UpdatePhoto(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, err_image_size)
 		}
 		//rename
-		waktu := fmt.Sprintf("%v", time.Now())
-		imageName := strconv.Itoa(int(photoUpdate.VenueID)) + "_" + "photo" + waktu + "." + format
-
+		generatePhotoName := uuid.New()
+		// waktu := fmt.Sprintf("%v", time.Now())
+		imageName := strconv.Itoa(int(photoUpdate.VenueID)) + "_" + "photo" + generatePhotoName.String() + "." + format
+		uploadPath := config.BUCKET_ROOT_FOLDER
 		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
-		imageaddress, errupload := delivery.client.UploadFile(dataFoto, "venues/", imageName)
+		imageaddress, errupload := delivery.client.UploadFile(dataFoto, uploadPath+"venues/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
