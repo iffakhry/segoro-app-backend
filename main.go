@@ -6,6 +6,7 @@ import (
 	modelSchedule "capstone-project/features/schedule/data"
 	"capstone-project/migration"
 	"capstone-project/utils/database/mysql"
+	"capstone-project/utils/helper"
 
 	"time"
 
@@ -68,7 +69,10 @@ func main() {
 
 	e.Use(middleware.Recover())
 	migration.InitMigrate(db)
-	factory.InitFactory(e, db)
+
+	storageconn := helper.InitStorage("immersive-academic-9c3ed0ea724a.json", "altabucket", "pet-adopter-358806")
+
+	factory.InitFactory(e, db, storageconn)
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.SERVER_PORT)))
 

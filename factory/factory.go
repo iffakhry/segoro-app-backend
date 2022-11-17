@@ -4,6 +4,7 @@ import (
 	userData "capstone-project/features/user/data"
 	userDelivery "capstone-project/features/user/delivery"
 	userUsecase "capstone-project/features/user/usecase"
+	"capstone-project/utils/helper"
 
 	venueData "capstone-project/features/venue/data"
 	venueDelivery "capstone-project/features/venue/delivery"
@@ -29,14 +30,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitFactory(e *echo.Echo, db *gorm.DB) {
+func InitFactory(e *echo.Echo, db *gorm.DB, client *helper.ClientUploader) {
 	userDataFactory := userData.New(db)
 	userUsecaseFactory := userUsecase.NewUserUsecase(userDataFactory)
 	userDelivery.New(e, userUsecaseFactory)
 
 	venueDataFactory := venueData.New(db)
 	venueUsecaseFactory := venueUsecase.New(venueDataFactory)
-	venueDelivery.New(e, venueUsecaseFactory)
+	venueDelivery.New(e, venueUsecaseFactory, client)
 
 	fieldDataFactory := fieldData.New(db)
 	fieldUsecaseFactory := fieldUsecase.New(fieldDataFactory)

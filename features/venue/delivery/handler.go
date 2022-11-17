@@ -16,11 +16,13 @@ import (
 
 type venueDelivery struct {
 	venueUsecase venue.UsecaseInterface
+	client       *helper.ClientUploader
 }
 
-func New(e *echo.Echo, usecase venue.UsecaseInterface) {
+func New(e *echo.Echo, usecase venue.UsecaseInterface, cl *helper.ClientUploader) {
 	handler := &venueDelivery{
 		venueUsecase: usecase,
+		client:       cl,
 	}
 
 	e.POST("/venues", handler.PostVenue, middlewares.JWTMiddleware())
@@ -177,7 +179,8 @@ func (delivery *venueDelivery) PostPhoto(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := strconv.Itoa(int(data.VenueID)) + "_" + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := delivery.client.UploadFile(dataFoto, "venues/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
