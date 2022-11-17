@@ -1,7 +1,6 @@
 package delivery
 
 import (
-	"capstone-project/config"
 	"capstone-project/features/venue"
 	"capstone-project/middlewares"
 	"capstone-project/utils/helper"
@@ -236,7 +235,8 @@ func (delivery *venueDelivery) UpdatePhoto(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := strconv.Itoa(int(photoUpdate.VenueID)) + "_" + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := delivery.client.UploadFile(dataFoto, "venues/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}

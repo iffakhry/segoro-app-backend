@@ -1,7 +1,6 @@
 package delivery
 
 import (
-	"capstone-project/config"
 	"capstone-project/features/user"
 	"capstone-project/middlewares"
 	"capstone-project/utils/helper"
@@ -15,11 +14,13 @@ import (
 
 type userDelivery struct {
 	userUsecase user.UsecaseInterface
+	client      *helper.ClientUploader
 }
 
-func New(e *echo.Echo, usecase user.UsecaseInterface) {
+func New(e *echo.Echo, usecase user.UsecaseInterface, cl *helper.ClientUploader) {
 	handler := &userDelivery{
 		userUsecase: usecase,
+		client:      cl,
 	}
 	e.POST("/users", handler.RegisterUser)
 	e.POST("/login", handler.LoginUser)
@@ -77,7 +78,8 @@ func (handler *userDelivery) RegisterUser(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := data.Name_User + "_" + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, "users/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
@@ -163,7 +165,8 @@ func (handler *userDelivery) UpdateUser(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := data.Name_User + "_" + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, "users/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
@@ -231,7 +234,8 @@ func (handler *userDelivery) RegisterOwner(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := strconv.Itoa(int(data.UserID)) + "_" + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := handler.client.UploadFile(dataFoto, "owners/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}

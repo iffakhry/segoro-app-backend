@@ -33,7 +33,7 @@ import (
 func InitFactory(e *echo.Echo, db *gorm.DB, client *helper.ClientUploader) {
 	userDataFactory := userData.New(db)
 	userUsecaseFactory := userUsecase.NewUserUsecase(userDataFactory)
-	userDelivery.New(e, userUsecaseFactory)
+	userDelivery.New(e, userUsecaseFactory, client)
 
 	venueDataFactory := venueData.New(db)
 	venueUsecaseFactory := venueUsecase.New(venueDataFactory)
@@ -53,5 +53,5 @@ func InitFactory(e *echo.Echo, db *gorm.DB, client *helper.ClientUploader) {
 
 	reviewDataFactory := reviewData.New(db)
 	reviewUsecaseFactory := reviewUsecase.New(reviewDataFactory)
-	reviewDelivery.New(e, reviewUsecaseFactory)
+	reviewDelivery.New(e, reviewUsecaseFactory, client)
 }

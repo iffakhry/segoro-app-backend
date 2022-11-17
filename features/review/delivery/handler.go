@@ -1,7 +1,6 @@
 package delivery
 
 import (
-	"capstone-project/config"
 	"capstone-project/features/review"
 	"capstone-project/middlewares"
 	"capstone-project/utils/helper"
@@ -15,11 +14,13 @@ import (
 
 type reviewDelivery struct {
 	reviewUsecase review.Usecaseinterface
+	client        *helper.ClientUploader
 }
 
-func New(e *echo.Echo, usecase review.Usecaseinterface) {
+func New(e *echo.Echo, usecase review.Usecaseinterface, cl *helper.ClientUploader) {
 	handler := &reviewDelivery{
 		reviewUsecase: usecase,
+		client:        cl,
 	}
 
 	e.POST("/reviews", handler.PostReview, middlewares.JWTMiddleware())
@@ -54,7 +55,8 @@ func (delivery *reviewDelivery) PostReview(c echo.Context) error {
 		waktu := fmt.Sprintf("%v", time.Now())
 		imageName := strconv.Itoa(int(reviewRequest.UserID)) + "_" + strconv.Itoa(int(reviewRequest.VenueID)) + "photo" + waktu + "." + format
 
-		imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		// imageaddress, errupload := helper.UploadFileToS3(config.FolderName, imageName, config.FileType, dataFoto)
+		imageaddress, errupload := delivery.client.UploadFile(dataFoto, "reviews/", imageName)
 		if errupload != nil {
 			return c.JSON(http.StatusInternalServerError, helper.Fail_Resp("fail to upload file"))
 		}
