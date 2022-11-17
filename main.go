@@ -70,7 +70,7 @@ func main() {
 	e.Use(middleware.Recover())
 	migration.InitMigrate(db)
 
-	storageconn := helper.InitStorage("immersive-academic-9c3ed0ea724a.json", "altabucket", "pet-adopter-358806")
+	storageconn := helper.InitStorage("immersive-academic-9c3ed0ea724a.json", "altabucket", "immersive-academic")
 
 	factory.InitFactory(e, db, storageconn)
 

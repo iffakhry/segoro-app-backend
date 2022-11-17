@@ -18,7 +18,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/ubuntu/Capstone-BE
+            cd /home/fakhry/segoro-app-backend
             git pull origin main
             docker stop capstone-be
             docker rm capstone-be
